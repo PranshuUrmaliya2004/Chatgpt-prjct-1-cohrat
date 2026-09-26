@@ -64,7 +64,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/auth/register',
+        'https://chatgpt-prjct-1-cohrat-2.onrender.com/api/auth/register',
         {
           email_id: email_id,
           fullname: {

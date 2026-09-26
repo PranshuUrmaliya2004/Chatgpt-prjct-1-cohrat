@@ -46,7 +46,7 @@
 //     e.preventDefault()
 // setSubmit(true)
 
-//     axios.post('http://localhost:3000/api/auth/login',{
+//     axios.post('https://chatgpt-prjct-1-cohrat-2.onrender.com/api/auth/login',{
 //         email:form.email,
 //         password:form.password
 //     },{
@@ -71,7 +71,7 @@
 //   }
 // //     try {
 // //     //   const response = await fetch(
-// //     //     'http://localhost:3000/api/auth/login',
+// //     //     'https://chatgpt-prjct-1-cohrat-2.onrender.com/api/auth/login',
 // //     //     {
 // //     //       method: 'POST',
 
@@ -224,7 +224,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/auth/login',
+        'https://chatgpt-prjct-1-cohrat-2.onrender.com/api/auth/login',
         {
           email_id: email_id,
           password: password
