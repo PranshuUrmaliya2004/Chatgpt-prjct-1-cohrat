@@ -17,7 +17,9 @@ app.use(cookieParser())
 app.use('/api/auth',authRouter)
 app.use('/api/chat',chatRouter)
 app.use(express.static(path.join(__dirname,'../public')))
-
+app.get("*name",(req,res)=>{
+    res.sendFile(path.join(__dirname,'../public/index.html'))
+})
 module.exports=app
 
 
