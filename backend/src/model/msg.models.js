@@ -25,6 +25,14 @@
          type:String,
          required:true
      },
+      attachments:[{
+          name:{ type:String, required:true },
+          mimeType:{ type:String, required:true }
+      }],
+      extractedText:{
+          type:String,
+          default:''
+      },
      role:{
         type:String,
         enum:["user","model","system"]

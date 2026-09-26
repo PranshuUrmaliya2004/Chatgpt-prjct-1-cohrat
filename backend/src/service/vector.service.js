@@ -56,8 +56,14 @@ async function queryMemory({queryVector,metadata,limit=5}){
     return data.matches
 }
 
+async function DeleteMemory(ids = []) {
+    if (ids.length) await Cohratindex.deleteMany({ ids });
+}
+
 module.exports ={
-    CreateMemory,queryMemory
+    CreateMemory,
+    queryMemory,
+    DeleteMemory
 }
 
 

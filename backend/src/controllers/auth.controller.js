@@ -1,9 +1,6 @@
-const express=require('express')
 const UserModel = require('../model/user.model')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-
-const router=require('../routes/auth.routes')
 
 
 async function registerController(req,res){
@@ -98,10 +95,10 @@ message : "invalid email or password"
 
 res.status(201).json({
     message:"User Login Successfully",
-    User :{
-   user: User.username,
-   id: User.id
-
+        user :{
+     id: User._id,
+     email_id: User.email_id,
+     fullname: User.fullname
     }
 })
 
@@ -109,10 +106,32 @@ res.status(201).json({
 
 }
 
+function logoutController(req, res) {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+    })
+
+    res.status(200).json({ message: 'Logged out successfully.' })
+}
+
+function currentUserController(req, res) {
+    res.json({
+        user: {
+            id: req.user._id,
+            email_id: req.user.email_id,
+            fullname: req.user.fullname
+        }
+    })
+}
+
 
 
 
 module.exports={
     registerController,
-    loginController
+    loginController,
+    logoutController,
+    currentUserController
 }
