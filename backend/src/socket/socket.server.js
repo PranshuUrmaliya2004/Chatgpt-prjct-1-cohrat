@@ -14,210 +14,8 @@
 // async function initSocketServer(httpserver) {
 
 //     const io = new Server(httpserver, {});
-// //socket io middlewear use
-//     io.use(async (socket, next) => {
-
-//         try {
-
-//             const cookies = cookie.parse(
-//                 socket.handshake.headers?.cookie || ""
-//             );
-
-          
-//             if (!cookies.token) {
-//                 return next(new Error("Unauthorized"));
-//             }
-
-//             const decoded = jwt.verify(
-//                 cookies.token,
-//                 process.env.JWT_SECRET
-//             );
-
-          
-
-//             const user = await UserModel.findById(decoded.id);
-
-//             if (!user) {
-//                 return next(new Error("User not found"));
-//             }
-
-//             socket.user = user;
-
-//             next();
-
-//         } catch (error) {
-
-//             console.log("Socket Error:", error.message);
-
-//             next(new Error("Invalid token"));
-
-//         }
-
-//     });
-
-
-//     io.on('connection', (socket) => {
-
-//         // console.table( socket.user);
-
-//         // console.log('New Socket connected:', socket.id);
-
-
-        
-
-//         // Client se message receive
-// //         socket.on('ai-msg', async(msgPayload) => {
-
-// //             console.log(msgPayload);
-// //       const message=    await MsgModel.create({
-// //               chat:msgPayload.chat,
-// //               user:msgPayload.user,
-// //               content:msgPayload.content,
-// //               role:"user"
-// //           })
-
-// //         const vectors= await generateVector(msgPayload.content);
-           
-// //         console.log("VECTOR:", vectors);
-// // console.log("VECTOR LENGTH:", vectors?.length);
-
-
-// //         await CreateMemory({
-// //             messageId:message._id,
-// //             vectors,
-// //             metadata:{
-// //                 chat:msgPayload.chat,
-// //                 user:socket.user._id,
-// //                 text:msgPayload.content
-// //             }
-
-// //         })
-
-
-// //         // const memory = await queryMemory({
-// //         //    queryVector: vectors,
-// //         //     limit:1,
-// //         //     metadata:{}
-// //         // })
-
-// //         const memory = await queryMemory({
-// //     queryVector: vectors,
-// //     limit: 3,
-// //     metadata: {
-// //         chat: msgPayload.chat
-// //     }
-// // });
-// //         console.log(memory)
-// //           const chatHistory=await MsgModel.find({
-// //             chat:msgPayload.chat
-// //           }).sort({ createdAt: -1 }).limit(4).lean();chatHistory.reverse();,
-         
-// //     const stm = chatHistory.map(item => {
-// //     return {
 // //         role: item.role,
 // //         parts: [
-// //             {
-// //                 text: item.content
-// //             }
-// //         ]
-// //     };
-// // });
-
- 
-// // const ltm = [
-// //     {
-// //         role: "user",
-// //         parts: [
-// //             {
-// //                 text: item
-// //             }
-// //         ]
-// //     }
-// // ];
-  
-    
-  
-
-
-// //        const response=await generateContent(chatHistory.map(item =>{
-        
-// //        return { role:item.role,
-// //            parts:[{text:item.content}]
-// //          }
-// //         }))
-
-        
-// //        const responseMsg= await MsgModel.create({
-// //               chat:msgPayload.chat,
-// //               user:msgPayload.user,
-// //               content:response,
-// //               role:"model"
-
-// //           })
-
-// //            const responseVectors= await generateVector(response);
-// //          await CreateMemory({
-// //             messageId:responseMsg._id,
-// //             vectors:responseVectors,
-// //               metadata:{
-// //                 chat:msgPayload.chat,
-// //                 user:socket.user._id,
-// //                 text:response
-// //             }
-
-// //         })
-
-
-
-
-
-// socket.on('ai-msg', async (msgPayload) => {
-//     try {
-//         console.log(msgPayload);
-
-//         // 1. Save user message
-//         const message = await MsgModel.create({
-//             chat: msgPayload.chat,
-//             user: socket.user._id,
-//             content: msgPayload.content,
-//             role: "user"
-//         });
-
-//         // 2. Generate vector for user message
-//         const vectors = await generateVector(msgPayload.content);
-
-//         console.log("VECTOR LENGTH:", vectors?.length);
-
-//         // 3. Save user message in long-term memory
-//         await CreateMemory({
-//             messageId: message._id,
-//             vectors,
-//             metadata: {
-//                 chat: msgPayload.chat,
-//                 user: socket.user._id,
-//                 text: msgPayload.content
-//             }
-//         });
-
-//         // 4. Query long-term memory
-//         const memory = await queryMemory({
-//             queryVector: vectors,
-//             limit: 3,
-//             metadata: {
-//                 chat: msgPayload.chat
-//             }
-//         });
-
-//         console.log("MEMORY:", memory);
-
-//         // 5. Get short-term memory
-//         const chatHistory = await MsgModel.find({
-//             chat: msgPayload.chat
-//         })
-//             .sort({ createdAt: -1 })
-//             .limit(4)
-//             .lean();
-
 //         chatHistory.reverse();
 
 //         // 6. Convert STM to Gemini format
@@ -315,6 +113,101 @@
 // }
 
 // module.exports = initSocketServer;
+
+/*
+const { Server } = require('socket.io');
+const cookie = require('cookie');
+const jwt = require('jsonwebtoken');
+const UserModel = require('../model/user.model');
+const ChatModel = require('../model/chat.model');
+const MsgModel = require('../model/msg.models');
+const { generateContent } = require('../service/ai.service');
+
+async function initSocketServer(httpserver) {
+    const io = new Server(httpserver, {
+        cors: {
+            origin: 'http://localhost:5173',
+            credentials: true
+        }
+    });
+
+    io.use(async (socket, next) => {
+        try {
+            const cookies = cookie.parse(socket.handshake.headers?.cookie || '');
+            if (!cookies.token) return next(new Error('Unauthorized'));
+
+            const decoded = jwt.verify(cookies.token, process.env.JWT_SECRET);
+            const user = await UserModel.findById(decoded.id);
+            if (!user) return next(new Error('Unauthorized'));
+
+            socket.user = user;
+            next();
+        } catch {
+            next(new Error('Unauthorized'));
+        }
+    });
+
+    io.on('connection', (socket) => {
+        socket.on('ai-msg', async (payload = {}) => {
+            try {
+                const content = typeof payload.content === 'string' ? payload.content.trim() : '';
+                if (!content || content.length > 8000 || !payload.chat) {
+                    socket.emit('ai-error', { message: 'Enter a message of up to 8000 characters.' });
+                    return;
+                }
+
+                const chat = await ChatModel.findOne({
+                    _id: payload.chat,
+                    user: socket.user._id
+                });
+                if (!chat) {
+                    socket.emit('ai-error', { message: 'Conversation not found. Start a new chat and try again.' });
+                    return;
+                }
+
+                await MsgModel.create({
+                    chat: chat._id,
+                    user: socket.user._id,
+                    content,
+                    role: 'user'
+                });
+
+                const messages = await MsgModel.find({ chat: chat._id })
+                    .sort({ createdAt: -1 })
+                    .limit(12)
+                    .lean();
+                messages.reverse();
+
+                const response = await generateContent(messages.map((message) => ({
+                    role: message.role,
+                    parts: [{ text: message.content }]
+                })));
+
+                await MsgModel.create({
+                    chat: chat._id,
+                    user: socket.user._id,
+                    content: response,
+                    role: 'model'
+                });
+                chat.lastActivity = new Date();
+                await chat.save();
+
+                socket.emit('ai-response', {
+                    content: response,
+                    chat: chat._id.toString()
+                });
+            } catch (error) {
+                console.error('AI message error:', error.message);
+                socket.emit('ai-error', { message: 'The assistant could not respond. Please try again.' });
+            }
+        });
+    });
+
+    return io;
+}
+
+module.exports = initSocketServer;
+*/
 
 
 
@@ -842,6 +735,7 @@ const {
 } = require('../service/ai.service');
 
 const MsgModel = require('../model/msg.models');
+const ChatModel = require('../model/chat.model');
 
 const {
     CreateMemory,
@@ -851,7 +745,12 @@ const {
 
 async function initSocketServer(httpserver) {
 
-    const io = new Server(httpserver, {});
+    const io = new Server(httpserver, {
+        cors: {
+            origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+            credentials: true
+        }
+    });
 
 
     // Socket.IO Middleware
@@ -903,6 +802,27 @@ async function initSocketServer(httpserver) {
         socket.on('ai-msg', async (msgPayload) => {
 
             try {
+
+                const content = typeof msgPayload?.content === 'string'
+                    ? msgPayload.content.trim()
+                    : '';
+                if (!content || content.length > 8000 || !msgPayload.chat) {
+                    socket.emit('ai-error', {
+                        message: 'Enter a message of up to 8000 characters.'
+                    });
+                    return;
+                }
+
+                const chat = await ChatModel.findOne({
+                    _id: msgPayload.chat,
+                    user: socket.user._id
+                });
+                if (!chat) {
+                    socket.emit('ai-error', {
+                        message: 'Conversation not found. Start a new chat and try again.'
+                    });
+                    return;
+                }
 
                 console.log("Message Payload:", msgPayload);
 
@@ -972,13 +892,13 @@ const [message, vectors] = await Promise.all([
 
         user: socket.user._id,
 
-        content: msgPayload.content,
+        content,
 
         role: "user"
 
     }),
 
-    generateVector(msgPayload.content)
+    generateVector(content)
 ]);
 
 await CreateMemory({
