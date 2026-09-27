@@ -15,7 +15,6 @@ const mammoth = require("mammoth");
 const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
 const MAX_ATTACHMENT_COUNT = 5;
 const MAX_DOCUMENT_TEXT_LENGTH = 16000;
-const MAX_HISTORY_MESSAGES = 12;
 async function prepareAttachments(attachments = []) {
   if (
     !Array.isArray(attachments) ||
@@ -213,15 +212,13 @@ async function initSocketServer(httpserver) {
             chat: chat._id,
           })
             .sort({
-              createdAt: -1,
+              createdAt: 1,
             })
-            .limit(MAX_HISTORY_MESSAGES)
             .lean(),
           generateVector(
             `${userMessage.content}\n${userMessage.extractedText || ""}`,
           ),
         ]);
-        messages.reverse();
         await CreateMemory({
           messageId: userMessage._id.toString(),
           vectors: queryVector,
@@ -275,11 +272,24 @@ async function initSocketServer(httpserver) {
           });
         }
         const response = await generateContent(history);
-        const responseMessage = await MsgModel.create({
-          chat: chat._id,
-          user: socket.user._id,
-          content: response,
-          role: "model",
+        const [responseMessage, responseVectors] = await Promise.all([
+          MsgModel.create({
+            chat: chat._id,
+            user: socket.user._id,
+            content: response,
+            role: "model",
+          }),
+          generateVector(response),
+        ]);
+        await CreateMemory({
+          messageId: responseMessage._id.toString(),
+          vectors: responseVectors,
+          metadata: {
+            chat: chat._id.toString(),
+            user: socket.user._id.toString(),
+            text: response,
+            role: "model",
+          },
         });
         chat.lastActivity = new Date();
         await chat.save();
@@ -289,22 +299,6 @@ async function initSocketServer(httpserver) {
           content: response,
           chat: chat._id.toString(),
         });
-        generateVector(response)
-          .then((responseVectors) =>
-            CreateMemory({
-              messageId: responseMessage._id.toString(),
-              vectors: responseVectors,
-              metadata: {
-                chat: chat._id.toString(),
-                user: socket.user._id.toString(),
-                text: response,
-                role: "model",
-              },
-            }),
-          )
-          .catch((error) => {
-            console.error("Response memory indexing failed:", error.message);
-          });
       } catch (error) {
         console.error("Chat operation error:", error.message);
         socket.emit("ai-error", {
