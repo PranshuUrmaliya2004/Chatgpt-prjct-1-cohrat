@@ -128,7 +128,7 @@ const { generateContent } = require('../service/ai.service');
 async function initSocketServer(httpserver) {
     const io = new Server(httpserver, {
         cors: {
-            origin: 'https://chatgpt-prjct-1-cohrat-2.onrender.com',
+            origin: 'origin: "https://chatgpt-prjct-1-cohrat-1.onrender.com"',
             credentials: true
         }
     });
@@ -808,7 +808,7 @@ async function initSocketServer(httpserver) {
     const io = new Server(httpserver, {
         maxHttpBufferSize: 12 * 1024 * 1024,
         cors: {
-            origin: process.env.FRONTEND_URL || 'https://chatgpt-prjct-1-cohrat-2.onrender.com',
+            origin: process.env.FRONTEND_URL || 'origin: "https://chatgpt-prjct-1-cohrat-1.onrender.com"',
             credentials: true
         }
     });
