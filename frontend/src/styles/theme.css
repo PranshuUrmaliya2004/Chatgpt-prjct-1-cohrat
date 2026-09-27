@@ -1,6 +1,8 @@
 :root {
   color-scheme: light dark;
-  --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   --font-display: Georgia, "Times New Roman", serif;
   --color-page: #eef2ef;
   --color-surface: rgba(255, 255, 255, 0.86);
@@ -115,7 +117,10 @@ input {
 .chat-brand {
   gap: 9px;
   color: var(--chat-ink);
-  font: 600 21px/1 Georgia, "Times New Roman", serif;
+  font:
+    600 21px/1 Georgia,
+    "Times New Roman",
+    serif;
   text-decoration: none;
 }
 
@@ -126,7 +131,10 @@ input {
   border-radius: 50%;
   background: var(--chat-green);
   color: #fff;
-  font: 600 17px/1 Georgia, "Times New Roman", serif;
+  font:
+    600 17px/1 Georgia,
+    "Times New Roman",
+    serif;
 }
 
 .chat-brand-mark {
@@ -281,7 +289,10 @@ input {
   border-radius: 50%;
   background: #dce9df;
   color: var(--chat-green);
-  font: 600 13px Georgia, "Times New Roman", serif;
+  font:
+    600 13px Georgia,
+    "Times New Roman",
+    serif;
 }
 
 .account-copy {
@@ -458,7 +469,10 @@ input {
   max-width: 530px;
   margin: 0;
   color: var(--chat-ink);
-  font: 500 38px/1.12 Georgia, "Times New Roman", serif;
+  font:
+    500 38px/1.12 Georgia,
+    "Times New Roman",
+    serif;
 }
 
 .welcome-copy {
@@ -487,7 +501,9 @@ input {
   cursor: pointer;
   font-size: 12px;
   text-align: left;
-  transition: background 150ms ease, border-color 150ms ease;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
 }
 
 .prompt-list button:hover {
@@ -528,7 +544,10 @@ input {
   border-radius: 50%;
   background: #e2ece4;
   color: var(--chat-green);
-  font: 600 12px Georgia, "Times New Roman", serif;
+  font:
+    600 12px Georgia,
+    "Times New Roman",
+    serif;
 }
 
 .message-content {
@@ -563,9 +582,15 @@ input {
   line-height: 1.25;
 }
 
-.message-model .message-content h1 { font-size: 24px; }
-.message-model .message-content h2 { font-size: 20px; }
-.message-model .message-content h3 { font-size: 17px; }
+.message-model .message-content h1 {
+  font-size: 24px;
+}
+.message-model .message-content h2 {
+  font-size: 20px;
+}
+.message-model .message-content h3 {
+  font-size: 17px;
+}
 
 .message-model .message-content ul,
 .message-model .message-content ol {
@@ -704,8 +729,12 @@ input {
   animation: typing 900ms infinite ease-in-out;
 }
 
-.typing-indicator i:nth-child(2) { animation-delay: 130ms; }
-.typing-indicator i:nth-child(3) { animation-delay: 260ms; }
+.typing-indicator i:nth-child(2) {
+  animation-delay: 130ms;
+}
+.typing-indicator i:nth-child(3) {
+  animation-delay: 260ms;
+}
 
 .composer-wrap {
   width: min(100%, 790px);
@@ -720,7 +749,9 @@ input {
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 5px 20px rgb(36 68 50 / 5%);
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .chat-composer:focus-within {
@@ -767,7 +798,9 @@ input {
   cursor: pointer;
   font-size: 20px;
   line-height: 1;
-  transition: background 150ms ease, opacity 150ms ease;
+  transition:
+    background 150ms ease,
+    opacity 150ms ease;
 }
 
 .send-button:hover:not(:disabled) {
@@ -797,18 +830,38 @@ input {
 }
 
 @keyframes welcome-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes message-in {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes typing {
-  0%, 60%, 100% { opacity: 0.45; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-3px); }
+  0%,
+  60%,
+  100% {
+    opacity: 0.45;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -822,16 +875,48 @@ input {
     --chat-soft: #263a2f;
   }
 
-  .chat-sidebar { background: #1b2922; }
-  .chat-brand, .topbar-title, .conversation-item { color: var(--chat-ink); }
-  .new-chat-button, .prompt-list button, .chat-composer { background: #202f28; color: var(--chat-ink); }
-  .conversation-item:hover, .conversation-item.is-active { background: #2a3b31; }
-  .conversation-item, .message-content p { color: #d4e0d6; }
-  .chat-topbar { background: rgb(29 43 35 / 88%); }
-  .message-user .message-content { border-color: #35493b; background: #26382d; }
-  .message-user .message-content p { color: #e1ebe2; }
-  .account-avatar, .message-avatar { background: #304638; color: #b5d9bd; }
-  .chat-notice { border-color: #6b4c34; background: #352b21; color: #f0d6b9; }
+  .chat-sidebar {
+    background: #1b2922;
+  }
+  .chat-brand,
+  .topbar-title,
+  .conversation-item {
+    color: var(--chat-ink);
+  }
+  .new-chat-button,
+  .prompt-list button,
+  .chat-composer {
+    background: #202f28;
+    color: var(--chat-ink);
+  }
+  .conversation-item:hover,
+  .conversation-item.is-active {
+    background: #2a3b31;
+  }
+  .conversation-item,
+  .message-content p {
+    color: #d4e0d6;
+  }
+  .chat-topbar {
+    background: rgb(29 43 35 / 88%);
+  }
+  .message-user .message-content {
+    border-color: #35493b;
+    background: #26382d;
+  }
+  .message-user .message-content p {
+    color: #e1ebe2;
+  }
+  .account-avatar,
+  .message-avatar {
+    background: #304638;
+    color: #b5d9bd;
+  }
+  .chat-notice {
+    border-color: #6b4c34;
+    background: #352b21;
+    color: #f0d6b9;
+  }
 }
 
 @media (min-width: 760px) {
@@ -891,7 +976,9 @@ input {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

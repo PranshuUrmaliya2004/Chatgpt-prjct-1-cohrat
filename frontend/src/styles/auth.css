@@ -3,7 +3,11 @@
   display: grid;
   place-items: center;
   padding: 24px 16px;
-  background: linear-gradient(135deg, var(--color-page), var(--color-accent-soft));
+  background: linear-gradient(
+    135deg,
+    var(--color-page),
+    var(--color-accent-soft)
+  );
 }
 
 .auth-card {
@@ -37,7 +41,7 @@
 
 .auth-card h1 {
   margin: 0 0 14px;
-  font: 500 clamp(36px, 10vw, 58px)/1.02 var(--font-display);
+  font: 500 clamp(36px, 10vw, 58px) / 1.02 var(--font-display);
   letter-spacing: -1.5px;
 }
 
@@ -68,7 +72,9 @@
   outline: 0;
   background: var(--color-input);
   color: var(--color-text);
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .auth-form input:focus {
@@ -105,7 +111,9 @@
   cursor: pointer;
   font-weight: 700;
   text-decoration: none;
-  transition: background 160ms ease, transform 160ms ease;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .auth-button:hover {

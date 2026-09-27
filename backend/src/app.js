@@ -1,48 +1,35 @@
-const mongoose=require('../src/db/db')
-const express = require('express');
-const cookieParser=require('cookie-parser')
-const authRouter=require('./routes/auth.routes');
-const chatRouter=require('./routes/chat.routes');
+const mongoose = require("../src/db/db");
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const authRouter = require("./routes/auth.routes");
+const chatRouter = require("./routes/chat.routes");
 const cors = require("cors");
-const path=require('path')
+const path = require("path");
 const app = express();
-app.use(cors({
+app.use(
+  cors({
     origin: "https://chatgpt-prjct-1-cohrat-1.onrender.com",
     // origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
-app.use(express.json())
-app.use(cookieParser())
-app.use('/api/auth',authRouter)
-app.use('/api/chat',chatRouter)
-app.use(express.static(path.join(__dirname,'../public')))
-app.get("*name",(req,res)=>{
-    res.sendFile(path.join(__dirname,'../public/index.html'))
-})
-module.exports=app
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+app.use(express.json());
+app.use(cookieParser());
+app.use("/api/auth", authRouter);
+app.use("/api/chat", chatRouter);
+app.use(express.static(path.join(__dirname, "../public")));
+app.get("*name", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+module.exports = app;
 
 // const express = require('express');
 // const UserModel = require('../model/user.model');
 // const jwt=require('jsonwebtoken')
 
 // const router = express.Router();
-
 
 // // REGISTER
 // router.post('/register', async (req, res) => {
@@ -52,7 +39,7 @@ module.exports=app
 //    const Username = await UserModel.findOne({
 //             username:username
 //         });
-   
+
 //          if (Username) {
 //             return res.status(401).json({
 //                 message: "User Already exist"
@@ -64,8 +51,6 @@ module.exports=app
 //             password
 //         });
 
-
-    
 //     const token=jwt.sign({
 //         id:user._id
 //      } ,process.env.JWT_SECRET)
@@ -79,7 +64,6 @@ module.exports=app
 //             token
 //         });
 
-
 //     } catch (error) {
 //         res.status(500).json({
 //             message: "Registration failed",
@@ -87,7 +71,6 @@ module.exports=app
 //         });
 //     }
 // });
-
 
 // // LOGIN
 // router.post('/login', async (req, res) => {
@@ -110,13 +93,11 @@ module.exports=app
 //         //     });
 //         // }
 
-
 //         const isPasswordValid=user.password === password
 //         if(!isPasswordValid){
 //              return res.status(401).json({
 //                 message: "Invalid password"
 //             });
-        
 
 //         }
 
@@ -127,7 +108,6 @@ module.exports=app
 //      res.cookie("Check",token,{
 //         expires:new Date(Date.now()+1000*60*60*24*7),//7days
 //      })
-
 
 //         res.status(200).json({
 //             message: "Login successful",
@@ -142,18 +122,14 @@ module.exports=app
 //     }
 // });
 
-
 // router.get('/logout',async(req,res)=>{
 //     res.clearCookie("Clear")
-
 
 //     res.status(200).json({
 //      message:"Logout Successfully"
 //     })
 
 // })
-
-
 
 // router.get('/user',async(req,res)=>{
 //     const token=req.cookies.Check
@@ -163,13 +139,10 @@ module.exports=app
 //           message:"Unauthorized"
 //         })
 
-
-
 //     }
 
 //     try{
 //  const decoded=   jwt.verify(token,process.env.JWT_SECRET)
-
 
 //   const user= await UserModel.findOne({
 //     _id:decoded.id
@@ -188,15 +161,7 @@ module.exports=app
 //     }
 // })
 
-
-
 // module.exports = router;
-
-
-
-
-
-
 
 // const mongoose = require('../src/db/db')
 // const express = require('express')
@@ -228,11 +193,6 @@ module.exports=app
 // })
 
 // module.exports = app
-
-
-
-
-
 
 // const mongoose = require('../src/db/db')
 
@@ -267,7 +227,6 @@ module.exports=app
 // // app.get("*name", (req, res) => {
 // //     res.sendFile(path.join(__dirname, 'index.html'))
 // // })
-
 
 // // Serve frontend files
 // app.use(express.static(path.join(__dirname, '../../public')))

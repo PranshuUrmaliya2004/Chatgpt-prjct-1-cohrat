@@ -1,15 +1,13 @@
-import AppRoutes from './AppRoutes'
-import './styles/theme.css'
-import './styles/auth.css'
+import AppRoutes from "./AppRoutes";
+import "./styles/theme.css";
+import "./styles/auth.css";
 
 function App() {
-  
-
   return (
     <>
-     <AppRoutes/>
+      <AppRoutes />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
