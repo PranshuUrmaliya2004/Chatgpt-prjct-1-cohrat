@@ -261,11 +261,20 @@ app.use('/api/auth', authRouter)
 app.use('/api/chat', chatRouter)
 
 // Serve frontend files
+// app.use(express.static(path.join(__dirname, '../public')))
+
+// // Serve index.html
+// app.get("*name", (req, res) => {
+//     res.sendFile(path.join(__dirname, 'index.html'))
+// })
+
+
+// Serve frontend files
 app.use(express.static(path.join(__dirname, '../public')))
 
 // Serve index.html
 app.get("*name", (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'))
+    res.sendFile(path.join(__dirname, '../index.html'))
 })
 
 module.exports = app
