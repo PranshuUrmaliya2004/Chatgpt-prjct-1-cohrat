@@ -7,7 +7,7 @@ const cors = require("cors");
 const path=require('path')
 const app = express();
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://chatgpt-prjct-1-cohrat-2.onrender.com",
     // origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
