@@ -225,7 +225,7 @@ const Login = () => {
     try {
       const response = await axios.post(
         // ' origin: "https://chatgpt-prjct-1-cohrat-2.onrender.com"/api/auth/login',
-           "https://chatgpt-prjct-1-cohrat-2.onrender.com/api/auth/login",
+           "https://chatgpt-prjct-1-cohrat-1.onrender.com/api/auth/login",
         {
           email_id: email_id,
           password: password

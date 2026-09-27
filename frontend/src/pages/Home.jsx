@@ -6,7 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 // const API_URL = ' origin: "https://chatgpt-prjct-1-cohrat-1.onrender.com"'
-const API_URL = 'https://chatgpt-prjct-1-cohrat-2.onrender.com'
+const API_URL = 'https://chatgpt-prjct-1-cohrat-1.onrender.com'
 
 const createLocalChat = () => ({
   id: crypto.randomUUID(),
