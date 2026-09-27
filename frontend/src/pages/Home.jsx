@@ -4,10 +4,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-// const API_URL = ' origin: "https://chatgpt-prjct-1-cohrat-1.onrender.com"'
 const API_URL = "https://chatgpt-prjct-1-cohrat-1.onrender.com";
-
 const createLocalChat = () => ({
   id: crypto.randomUUID(),
   backendId: null,
@@ -15,7 +12,6 @@ const createLocalChat = () => ({
   updatedAt: Date.now(),
   messages: [],
 });
-
 const getPlainText = (node) =>
   Children.toArray(node)
     .map((child) => {
@@ -24,7 +20,6 @@ const getPlainText = (node) =>
       return isValidElement(child) ? getPlainText(child.props.children) : "";
     })
     .join("");
-
 const Home = () => {
   const [chats, setChats] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -47,12 +42,12 @@ const Home = () => {
   const sortedChats = [...chats].sort(
     (first, second) => second.updatedAt - first.updatedAt,
   );
-
   useEffect(() => {
     let isMounted = true;
-
     axios
-      .get(`${API_URL}/api/chat`, { withCredentials: true })
+      .get(`${API_URL}/api/chat`, {
+        withCredentials: true,
+      })
       .then((response) => {
         if (!isMounted) return;
         const history = response.data.chats.map((chat) => ({
@@ -70,23 +65,23 @@ const Home = () => {
           );
         }
       });
-
     axios
-      .get(`${API_URL}/api/auth/me`, { withCredentials: true })
+      .get(`${API_URL}/api/auth/me`, {
+        withCredentials: true,
+      })
       .then((response) => {
         if (isMounted) setCurrentUser(response.data.user);
       })
       .catch(() => {});
-
     return () => {
       isMounted = false;
     };
   }, []);
-
   useEffect(() => {
-    const socket = io(API_URL, { withCredentials: true });
+    const socket = io(API_URL, {
+      withCredentials: true,
+    });
     socketRef.current = socket;
-
     socket.on("connect", () => {
       setConnection("connected");
       setNotice("");
@@ -100,7 +95,6 @@ const Home = () => {
         pendingRef.current = null;
         setSending(false);
       }
-
       setChats((currentChats) =>
         currentChats.map((chat) =>
           chat.backendId === response.chat
@@ -113,7 +107,10 @@ const Home = () => {
                     : chat.messages
                   ).map((message) =>
                     message.id === pending?.localMessageId
-                      ? { ...message, id: response.userMessageId || message.id }
+                      ? {
+                          ...message,
+                          id: response.userMessageId || message.id,
+                        }
                       : message,
                   ),
                   {
@@ -137,7 +134,10 @@ const Home = () => {
           setChats((currentChats) =>
             currentChats.map((chat) =>
               chat.backendId === pending.backendId
-                ? { ...chat, messages: pending.previousMessages }
+                ? {
+                    ...chat,
+                    messages: pending.previousMessages,
+                  }
                 : chat,
             ),
           );
@@ -147,17 +147,17 @@ const Home = () => {
         error.message || "The assistant could not respond. Please try again.",
       );
     });
-
     return () => {
       socket.disconnect();
       if (pendingRef.current) window.clearTimeout(pendingRef.current.timeout);
     };
   }, []);
-
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
   }, [activeChatId, activeChat?.messages.length]);
-
   const startNewChat = () => {
     const chat = createLocalChat();
     setChats((currentChats) => [chat, ...currentChats]);
@@ -166,13 +166,11 @@ const Home = () => {
     setNotice("");
     setSidebarOpen(false);
   };
-
   const selectChat = (chatId) => {
     setActiveChatId(chatId);
     setSidebarOpen(false);
     setNotice("");
   };
-
   const deleteChat = async (chat) => {
     try {
       if (chat.backendId) {
@@ -180,7 +178,6 @@ const Home = () => {
           withCredentials: true,
         });
       }
-
       const remainingChats = sortedChats.filter((item) => item.id !== chat.id);
       setChats((currentChats) =>
         currentChats.filter((item) => item.id !== chat.id),
@@ -195,14 +192,15 @@ const Home = () => {
       );
     }
   };
-
   const logout = async () => {
     setLoggingOut(true);
     try {
       await axios.post(
         `${API_URL}/api/auth/logout`,
         {},
-        { withCredentials: true },
+        {
+          withCredentials: true,
+        },
       );
       setCurrentUser(null);
       setChats([]);
@@ -218,7 +216,6 @@ const Home = () => {
       setLoggingOut(false);
     }
   };
-
   const encodeFile = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -231,7 +228,6 @@ const Home = () => {
       reader.onerror = () => reject(new Error(`Could not read ${file.name}.`));
       reader.readAsDataURL(file);
     });
-
   const chooseFiles = (event) => {
     const files = Array.from(event.target.files || []);
     if (files.length + selectedFiles.length > 5) {
@@ -251,14 +247,12 @@ const Home = () => {
     }
     event.target.value = "";
   };
-
   const beginEdit = (message) => {
     setEditingMessage(message);
     setInput(message.content);
     setSelectedFiles([]);
     setNotice("");
   };
-
   const regenerateResponse = (message) => {
     if (sending || !activeChat?.backendId) return;
     const messageIndex = activeChat.messages.findIndex(
@@ -269,7 +263,6 @@ const Home = () => {
       .reverse()
       .find((item) => item.role === "user");
     if (!userMessage) return;
-
     const socket = socketRef.current;
     if (!socket?.connected) {
       setNotice(
@@ -277,12 +270,14 @@ const Home = () => {
       );
       return;
     }
-
     const previousMessages = activeChat.messages;
     setChats((currentChats) =>
       currentChats.map((chat) =>
         chat.id === activeChat.id
-          ? { ...chat, messages: chat.messages.slice(0, messageIndex) }
+          ? {
+              ...chat,
+              messages: chat.messages.slice(0, messageIndex),
+            }
           : chat,
       ),
     );
@@ -295,7 +290,10 @@ const Home = () => {
         setChats((currentChats) =>
           currentChats.map((chat) =>
             chat.backendId === pending.backendId
-              ? { ...chat, messages: pending.previousMessages }
+              ? {
+                  ...chat,
+                  messages: pending.previousMessages,
+                }
               : chat,
           ),
         );
@@ -317,7 +315,6 @@ const Home = () => {
       messageId: message.id,
     });
   };
-
   const copyResponse = async (message) => {
     try {
       await navigator.clipboard.writeText(message.content);
@@ -327,7 +324,6 @@ const Home = () => {
       setNotice("Could not copy the response. Check clipboard permissions.");
     }
   };
-
   const copyCode = async (messageId, code) => {
     const key = `${messageId}:${code}`;
     try {
@@ -340,18 +336,15 @@ const Home = () => {
       setNotice("Could not copy the code. Check clipboard permissions.");
     }
   };
-
   const sendMessage = async (event) => {
     event.preventDefault();
     const content = input.trim();
     if ((!content && !selectedFiles.length) || sending) return;
-
     const chat = activeChat || createLocalChat();
     if (!activeChat) {
       setChats((currentChats) => [chat, ...currentChats]);
       setActiveChatId(chat.id);
     }
-
     const localChatId = chat.id;
     const operation = editingMessage ? "edit" : "send";
     let attachments;
@@ -392,32 +385,36 @@ const Home = () => {
     setSelectedFiles([]);
     setEditingMessage(null);
     setNotice("");
-
     try {
       let backendChatId = chat.backendId;
       if (!backendChatId) {
         const response = await axios.post(
           `${API_URL}/api/chat`,
-          { title: content.slice(0, 42) },
-          { withCredentials: true },
+          {
+            title: content.slice(0, 42),
+          },
+          {
+            withCredentials: true,
+          },
         );
         backendChatId = response.data.chat.id;
         setChats((currentChats) =>
           currentChats.map((item) =>
             item.id === localChatId
-              ? { ...item, backendId: backendChatId }
+              ? {
+                  ...item,
+                  backendId: backendChatId,
+                }
               : item,
           ),
         );
       }
-
       const socket = socketRef.current;
       if (!socket?.connected) {
         throw new Error(
           "Connect to the assistant by signing in and starting the backend.",
         );
       }
-
       setSending(true);
       const timeout = window.setTimeout(() => {
         const pending = pendingRef.current;
@@ -427,7 +424,10 @@ const Home = () => {
           setChats((currentChats) =>
             currentChats.map((item) =>
               item.backendId === pending.backendId
-                ? { ...item, messages: pending.previousMessages }
+                ? {
+                    ...item,
+                    messages: pending.previousMessages,
+                  }
                 : item,
             ),
           );
@@ -456,7 +456,12 @@ const Home = () => {
       setSending(false);
       setChats((currentChats) =>
         currentChats.map((item) =>
-          item.id === localChatId ? { ...item, messages: chat.messages } : item,
+          item.id === localChatId
+            ? {
+                ...item,
+                messages: chat.messages,
+              }
+            : item,
         ),
       );
       setNotice(
@@ -466,14 +471,12 @@ const Home = () => {
       );
     }
   };
-
   const handleComposerKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       event.currentTarget.form?.requestSubmit();
     }
   };
-
   return (
     <main className="chat-app">
       {sidebarOpen && (
@@ -660,7 +663,6 @@ const Home = () => {
                                 /language-([\w-]+)/,
                               )?.[1] || "Code";
                             const codeKey = `${message.id}:${code}`;
-
                             return (
                               <div className="code-block">
                                 <div className="code-block-header">
@@ -869,5 +871,4 @@ const Home = () => {
     </main>
   );
 };
-
 export default Home;

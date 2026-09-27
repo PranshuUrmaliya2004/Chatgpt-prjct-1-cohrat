@@ -19,8 +19,6 @@ async function registerController(req, res) {
     });
   }
 
-  // Hash password
-  //  const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await UserModel.create({
@@ -68,9 +66,6 @@ async function loginController(req, res) {
       message: "Invalid Password",
     });
   }
-
-  // Hash password
-  //  const salt = await bcrypt.genSalt(10);
 
   const token = jwt.sign({ id: User._id }, process.env.JWT_SECRET);
 

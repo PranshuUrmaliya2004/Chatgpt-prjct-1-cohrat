@@ -6,9 +6,6 @@ const {
   DeleteChat,
 } = require("../controllers/ChatController");
 
-console.log("authMiddleware:", typeof authMiddleware);
-console.log("CreateChat:", typeof CreateChat);
-
 const router = express.Router();
 
 router.post("/", authMiddleware, CreateChat);

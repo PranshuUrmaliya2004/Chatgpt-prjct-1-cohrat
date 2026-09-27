@@ -3,7 +3,6 @@ require("dotenv").config({ path: require("path").join(__dirname, ".env") });
 const app = require("./src/app");
 
 const ConnectToDB = require("./src/db/db");
-// const mongoose =require('./src/db/db')
 const initSocketServer = require("./src/socket/socket.server");
 const httpserver = require("http").createServer(app);
 
