@@ -1,27 +1,27 @@
-// const mongoose=require('../src/db/db')
-// const express = require('express');
-// const cookieParser=require('cookie-parser')
-// const authRouter=require('./routes/auth.routes');
-// const chatRouter=require('./routes/chat.routes');
-// const cors = require("cors");
-// const path=require('path')
-// const app = express();
-// app.use(cors({
-//     // origin: "http://localhost:5173",
-//     origin: true,
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization"]
-// }));
-// app.use(express.json())
-// app.use(cookieParser())
-// app.use('/api/auth',authRouter)
-// app.use('/api/chat',chatRouter)
-// app.use(express.static(path.join(__dirname,'../public')))
-// app.get("*name",(req,res)=>{
-//     res.sendFile(path.join(__dirname,'../public/index.html'))
-// })
-// module.exports=app
+const mongoose=require('../src/db/db')
+const express = require('express');
+const cookieParser=require('cookie-parser')
+const authRouter=require('./routes/auth.routes');
+const chatRouter=require('./routes/chat.routes');
+const cors = require("cors");
+const path=require('path')
+const app = express();
+app.use(cors({
+    origin: "http://localhost:5173",
+    // origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+app.use(express.json())
+app.use(cookieParser())
+app.use('/api/auth',authRouter)
+app.use('/api/chat',chatRouter)
+app.use(express.static(path.join(__dirname,'../public')))
+app.get("*name",(req,res)=>{
+    res.sendFile(path.join(__dirname,'../public/index.html'))
+})
+module.exports=app
 
 
 
@@ -234,46 +234,46 @@
 
 
 
-const mongoose = require('../src/db/db')
+// const mongoose = require('../src/db/db')
 
-const express = require('express')
-const cookieParser = require('cookie-parser')
+// const express = require('express')
+// const cookieParser = require('cookie-parser')
 
-const authRouter = require('./routes/auth.routes')
-const chatRouter = require('./routes/chat.routes')
+// const authRouter = require('./routes/auth.routes')
+// const chatRouter = require('./routes/chat.routes')
 
-const cors = require('cors')
-const path = require('path')
+// const cors = require('cors')
+// const path = require('path')
 
-const app = express()
+// const app = express()
 
-app.use(cors({
-    origin: true,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}))
+// app.use(cors({
+//     origin: true,
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"]
+// }))
 
-app.use(express.json())
-app.use(cookieParser())
+// app.use(express.json())
+// app.use(cookieParser())
 
-app.use('/api/auth', authRouter)
-app.use('/api/chat', chatRouter)
+// app.use('/api/auth', authRouter)
+// app.use('/api/chat', chatRouter)
 
-// Serve frontend files
-// app.use(express.static(path.join(__dirname, '../public')))
+// // Serve frontend files
+// // app.use(express.static(path.join(__dirname, '../public')))
 
-// // Serve index.html
+// // // Serve index.html
+// // app.get("*name", (req, res) => {
+// //     res.sendFile(path.join(__dirname, 'index.html'))
+// // })
+
+
+// // Serve frontend files
+// app.use(express.static(path.join(__dirname, '../../public')))
+
 // app.get("*name", (req, res) => {
-//     res.sendFile(path.join(__dirname, 'index.html'))
+//     res.sendFile(path.join(__dirname, '../../public/index.html'))
 // })
 
-
-// Serve frontend files
-app.use(express.static(path.join(__dirname, '../../public')))
-
-app.get("*name", (req, res) => {
-    res.sendFile(path.join(__dirname, '../../public/index.html'))
-})
-
-module.exports = app
+// module.exports = app
