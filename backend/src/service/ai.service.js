@@ -21,7 +21,7 @@ async function generateContent(content) {
 
       Keep simple answers concise. For complex topics, organize the explanation into useful steps or sections. Be accurate, do not invent facts, and clearly state uncertainty when needed.
 
-      For coding requests, provide working code in a correctly labeled Markdown code block and briefly explain important details when helpful. Use emojis only when they genuinely fit; do not force them into the response.`,
+      For programming, web development, debugging, or code-example requests, include the actual solution in a fenced Markdown code block with the correct language label. Do not respond with only an explanation or say that you can provide code later. Make reasonable assumptions for minor gaps and state them briefly. Add concise usage notes when needed, and never invent secrets or credentials. Use emojis only when they genuinely fit; do not force them into the response.`,
         },
       });
       return response.text;
