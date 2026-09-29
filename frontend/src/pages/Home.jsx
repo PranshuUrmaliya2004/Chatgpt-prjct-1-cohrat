@@ -301,7 +301,7 @@ const Home = () => {
       setNotice(
         "The assistant did not respond. Check that the chat socket is running, then try again.",
       );
-    }, 30000);
+    }, 90000);
     pendingRef.current = {
       backendId: activeChat.backendId,
       mode: "replace",
@@ -435,7 +435,7 @@ const Home = () => {
         setNotice(
           "The assistant did not respond. Check that the chat socket is running, then try again.",
         );
-      }, 30000);
+      }, 90000);
       pendingRef.current = {
         backendId: backendChatId,
         mode: operation === "edit" ? "replace" : "append",

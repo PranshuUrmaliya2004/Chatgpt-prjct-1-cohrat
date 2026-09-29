@@ -223,7 +223,7 @@ async function initSocketServer(httpserver) {
             `${userMessage.content}\n${userMessage.extractedText || ""}`,
           ),
         ]);
-        await CreateMemory({
+        CreateMemory({
           messageId: userMessage._id.toString(),
           vectors: queryVector,
           metadata: {
@@ -231,6 +231,8 @@ async function initSocketServer(httpserver) {
             user: socket.user._id.toString(),
             text: `${userMessage.content}\n${userMessage.extractedText || ""}`,
           },
+        }).catch((error) => {
+          console.error("User memory save error:", error.message);
         });
         const memory = await queryMemory({
           queryVector,
@@ -276,24 +278,11 @@ async function initSocketServer(httpserver) {
           });
         }
         const response = await generateContent(history);
-        const [responseMessage, responseVectors] = await Promise.all([
-          MsgModel.create({
-            chat: chat._id,
-            user: socket.user._id,
-            content: response,
-            role: "model",
-          }),
-          generateVector(response),
-        ]);
-        await CreateMemory({
-          messageId: responseMessage._id.toString(),
-          vectors: responseVectors,
-          metadata: {
-            chat: chat._id.toString(),
-            user: socket.user._id.toString(),
-            text: response,
-            role: "model",
-          },
+        const responseMessage = await MsgModel.create({
+          chat: chat._id,
+          user: socket.user._id,
+          content: response,
+          role: "model",
         });
         chat.lastActivity = new Date();
         await chat.save();
@@ -303,6 +292,22 @@ async function initSocketServer(httpserver) {
           content: response,
           chat: chat._id.toString(),
         });
+        generateVector(response)
+          .then((responseVectors) =>
+            CreateMemory({
+              messageId: responseMessage._id.toString(),
+              vectors: responseVectors,
+              metadata: {
+                chat: chat._id.toString(),
+                user: socket.user._id.toString(),
+                text: response,
+                role: "model",
+              },
+            }),
+          )
+          .catch((error) => {
+            console.error("Response memory save error:", error.message);
+          });
       } catch (error) {
         console.error("Chat operation error:", error.message);
         socket.emit("ai-error", {
