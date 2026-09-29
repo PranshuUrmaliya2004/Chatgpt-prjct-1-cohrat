@@ -80,7 +80,7 @@ async function initSocketServer(httpserver) {
         "https://chatgpt-prjct-1-cohrat-2.onrender.com",
         "http://localhost:5173",
       ],
-      credentials: true,
+      withCredentials: true,
     },
   });
   io.use(async (socket, next) => {
