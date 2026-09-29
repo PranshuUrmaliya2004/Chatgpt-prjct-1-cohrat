@@ -45,12 +45,12 @@ const Register = () => {
           C
         </div>
 
-        <p className="eyebrow">Get started</p>
+        <p className="eyebrow">Start a conversation</p>
 
-        <h1 id="register-title">Create your account</h1>
+        <h1 id="register-title">Create your chat account</h1>
 
         <p className="auth-intro">
-          Set up your personal space in just a few steps.
+          Save your conversations and return to them whenever you need.
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>

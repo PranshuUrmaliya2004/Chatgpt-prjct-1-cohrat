@@ -41,12 +41,12 @@ const Login = () => {
           C
         </div>
 
-        <p className="eyebrow">Welcome back</p>
+        <p className="eyebrow">Your AI conversations</p>
 
-        <h1 id="login-title">Sign in to your workspace</h1>
+        <h1 id="login-title">Continue your chats</h1>
 
         <p className="auth-intro">
-          Continue where you left off with your conversations.
+          Sign in to pick up where your saved conversations left off.
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
