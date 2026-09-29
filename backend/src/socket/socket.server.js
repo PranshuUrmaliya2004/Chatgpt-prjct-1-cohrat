@@ -75,7 +75,11 @@ async function initSocketServer(httpserver) {
   const io = new Server(httpserver, {
     maxHttpBufferSize: 12 * 1024 * 1024,
     cors: {
-      origin: "https://chatgpt-prjct-1-cohrat-1.onrender.com",
+      origin: [
+        "https://chatgpt-prjct-1-cohrat-1.onrender.com",
+        "https://chatgpt-prjct-1-cohrat-2.onrender.com",
+        "http://localhost:5173",
+      ],
       credentials: true,
     },
   });
