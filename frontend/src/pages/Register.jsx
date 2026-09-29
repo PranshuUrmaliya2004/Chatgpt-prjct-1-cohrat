@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config";
 const Register = () => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
@@ -15,7 +16,7 @@ const Register = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://chatgpt-prjct-1-cohrat-2.onrender.com/api/auth/register",
+        `${API_URL}/api/auth/register`,
         {
           email_id: email_id,
           fullname: {

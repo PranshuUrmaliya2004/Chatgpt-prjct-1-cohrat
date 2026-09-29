@@ -15,6 +15,26 @@ const mammoth = require("mammoth");
 const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024;
 const MAX_ATTACHMENT_COUNT = 5;
 const MAX_DOCUMENT_TEXT_LENGTH = 16000;
+function withTimeout(operation, timeoutMs, operationName) {
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      console.error(`${operationName} timed out`);
+      resolve(null);
+    }, timeoutMs);
+    timeout.unref?.();
+    operation.then(
+      (result) => {
+        clearTimeout(timeout);
+        resolve(result);
+      },
+      (error) => {
+        clearTimeout(timeout);
+        console.error(`${operationName} failed:`, error.message);
+        resolve(null);
+      },
+    );
+  });
+}
 async function prepareAttachments(attachments = []) {
   if (
     !Array.isArray(attachments) ||
@@ -219,28 +239,40 @@ async function initSocketServer(httpserver) {
               createdAt: 1,
             })
             .lean(),
-          generateVector(
-            `${userMessage.content}\n${userMessage.extractedText || ""}`,
+          withTimeout(
+            generateVector(
+              `${userMessage.content}\n${userMessage.extractedText || ""}`,
+            ),
+            8000,
+            "User embedding",
           ),
         ]);
-        CreateMemory({
-          messageId: userMessage._id.toString(),
-          vectors: queryVector,
-          metadata: {
-            chat: chat._id.toString(),
-            user: socket.user._id.toString(),
-            text: `${userMessage.content}\n${userMessage.extractedText || ""}`,
-          },
-        }).catch((error) => {
-          console.error("User memory save error:", error.message);
-        });
-        const memory = await queryMemory({
-          queryVector,
-          limit: 3,
-          metadata: {
-            chat: chat._id.toString(),
-          },
-        });
+        let memory = [];
+        if (queryVector) {
+          CreateMemory({
+            messageId: userMessage._id.toString(),
+            vectors: queryVector,
+            metadata: {
+              chat: chat._id.toString(),
+              user: socket.user._id.toString(),
+              text: `${userMessage.content}\n${userMessage.extractedText || ""}`,
+            },
+          }).catch((error) => {
+            console.error("User memory save error:", error.message);
+          });
+          memory =
+            (await withTimeout(
+              queryMemory({
+                queryVector,
+                limit: 3,
+                metadata: {
+                  chat: chat._id.toString(),
+                },
+              }),
+              5000,
+              "Memory lookup",
+            )) || [];
+        }
         const history = messages.map((message) => {
           const parts = [
             {
