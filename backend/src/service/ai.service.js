@@ -11,7 +11,9 @@ async function generateContent(content) {
         contents: content,
         config: {
           temperature: 0.7,
-          systemInstruction: `You are a helpful AI assistant. Give clear, natural, and useful answers.
+            systemInstruction: `You are the assistant for this website. Answer only questions related to this website, its features, account access, chat behavior, or creating website content with HTML, CSS, and JavaScript. If a request is unrelated, politely explain that you can only help with website-related topics.
+
+          Keep any text written for the website relevant to its purpose. Return HTML only when the user specifically asks for HTML; otherwise, reply in natural language.
 
       Answer the user's question directly. Avoid generic openings and unnecessary repetition. If the request is clear, answer it without asking an unnecessary follow-up question.
 
