@@ -754,6 +754,38 @@ input {
     box-shadow 160ms ease;
 }
 
+.composer-modes {
+  display: inline-flex;
+  gap: 3px;
+  margin-bottom: 9px;
+  padding: 3px;
+  border-radius: 6px;
+  background: #f0f4f1;
+}
+
+.composer-modes button {
+  min-height: 27px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--chat-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+
+.composer-modes button.is-active {
+  background: #fff;
+  color: var(--chat-ink);
+  box-shadow: 0 1px 3px rgb(24 58 51 / 12%);
+}
+
+.composer-modes button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .chat-composer:focus-within {
   border-color: #9db9a4;
   box-shadow: 0 0 0 3px rgb(39 107 85 / 9%);
@@ -808,6 +840,28 @@ input {
 }
 
 .send-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.generate-button {
+  min-height: 34px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--chat-green);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.generate-button:hover:not(:disabled) {
+  background: #1c533f;
+}
+
+.generate-button:disabled {
   cursor: not-allowed;
   opacity: 0.42;
 }
@@ -1058,6 +1112,47 @@ input {
   gap: 6px;
 }
 
+.generated-file {
+  display: grid;
+  width: min(100%, 420px);
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #d8e3da;
+  border-radius: 7px;
+  background: #f7faf7;
+}
+
+.generated-file-image {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  border-radius: 4px;
+  background: #edf1ed;
+  object-fit: contain;
+}
+
+.generated-file-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #4f6659;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.generated-file-details a {
+  flex: 0 0 auto;
+  color: var(--chat-green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.generated-file-details a:hover {
+  text-decoration: underline;
+}
+
 .attachment-chip {
   display: inline-flex;
   max-width: 100%;
@@ -1116,5 +1211,13 @@ input {
 @media (hover: none) {
   .message-actions {
     opacity: 1;
+  }
+}
+
+@media (max-width: 560px) {
+  .generated-file-details {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
 }

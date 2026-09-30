@@ -25,6 +25,7 @@ const Home = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeChatId, setActiveChatId] = useState("");
   const [input, setInput] = useState("");
+  const [composerMode, setComposerMode] = useState("chat");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [connection, setConnection] = useState("connecting");
   const [notice, setNotice] = useState("");
@@ -471,6 +472,134 @@ const Home = () => {
       );
     }
   };
+  const generateAsset = async (event) => {
+    event.preventDefault();
+    const prompt = input.trim();
+    if (!prompt || sending) return;
+
+    const mode = composerMode;
+    const chat = activeChat || createLocalChat();
+    const originalMessages = chat.messages;
+    const userMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: prompt,
+    };
+    if (!activeChat) setActiveChatId(chat.id);
+    setChats((currentChats) => {
+      const existingChat = currentChats.some((item) => item.id === chat.id);
+      if (existingChat) {
+        return currentChats.map((item) =>
+          item.id === chat.id
+            ? {
+                ...item,
+                title: item.messages.length ? item.title : prompt.slice(0, 42),
+                messages: [...item.messages, userMessage],
+              }
+            : item,
+        );
+      }
+      return [
+        {
+          ...chat,
+          title: prompt.slice(0, 42),
+          messages: [...originalMessages, userMessage],
+        },
+        ...currentChats,
+      ];
+    });
+    setInput("");
+    setSelectedFiles([]);
+    setNotice("");
+    setSending(true);
+
+    let backendChatId = chat.backendId;
+    try {
+      if (!backendChatId) {
+        const chatResponse = await axios.post(
+          `${API_URL}/api/chat`,
+          { title: prompt.slice(0, 42) },
+          { withCredentials: true },
+        );
+        backendChatId = chatResponse.data.chat.id;
+      }
+
+      let generatedFile;
+      let responseContent;
+      if (mode === "pdf") {
+        const response = await axios.post(
+          `${API_URL}/api/generate/pdf`,
+          { prompt, title: "Trisha AI document" },
+          { responseType: "blob", withCredentials: true },
+        );
+        const fileName =
+          response.headers["content-disposition"]?.match(/filename="?([^";]+)"?/i)?.[1] ||
+          "trisha-ai-document.pdf";
+        generatedFile = {
+          kind: "pdf",
+          name: fileName,
+          mimeType: "application/pdf",
+          url: URL.createObjectURL(response.data),
+        };
+        responseContent = "Your PDF is ready.";
+      } else {
+        const response = await axios.post(
+          `${API_URL}/api/generate/image`,
+          { prompt },
+          { withCredentials: true },
+        );
+        generatedFile = {
+          kind: "image",
+          name: response.data.fileName,
+          mimeType: response.data.mimeType,
+          url: response.data.data,
+        };
+        responseContent = "Your image is ready.";
+      }
+
+      const resultMessage = {
+        id: crypto.randomUUID(),
+        role: "model",
+        content: responseContent,
+        generatedFile,
+      };
+      setChats((currentChats) =>
+        currentChats.map((item) =>
+          item.id === chat.id
+            ? {
+                ...item,
+                backendId: backendChatId,
+                updatedAt: Date.now(),
+                messages: [...originalMessages, userMessage, resultMessage],
+              }
+            : item,
+        ),
+      );
+    } catch (error) {
+      let message = error.response?.data?.message || error.message;
+      if (error.response?.data instanceof Blob) {
+        try {
+          message = JSON.parse(await error.response.data.text()).message;
+        } catch {
+          message = "File generation failed. Please try again.";
+        }
+      }
+      setChats((currentChats) =>
+        currentChats.map((item) =>
+          item.id === chat.id
+            ? {
+                ...item,
+                backendId: backendChatId || item.backendId,
+                messages: originalMessages,
+              }
+            : item,
+        ),
+      );
+      setNotice(message || "File generation failed. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
   const handleComposerKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -700,6 +829,26 @@ const Home = () => {
                         ))}
                       </div>
                     )}
+                    {message.generatedFile && (
+                      <div className="generated-file">
+                        {message.generatedFile.kind === "image" && (
+                          <img
+                            className="generated-file-image"
+                            src={message.generatedFile.url}
+                            alt="AI-generated result"
+                          />
+                        )}
+                        <div className="generated-file-details">
+                          <span>{message.generatedFile.name}</span>
+                          <a
+                            href={message.generatedFile.url}
+                            download={message.generatedFile.name}
+                          >
+                            Download {message.generatedFile.kind === "pdf" ? "PDF" : "image"}
+                          </a>
+                        </div>
+                      </div>
+                    )}
                     <div className="message-actions">
                       {message.role === "user" && (
                         <button
@@ -814,7 +963,32 @@ const Home = () => {
               ))}
             </div>
           )}
-          <form className="chat-composer" onSubmit={sendMessage}>
+          <form
+            className="chat-composer"
+            onSubmit={composerMode === "chat" ? sendMessage : generateAsset}
+          >
+            <div className="composer-modes" role="group" aria-label="Create mode">
+              {[
+                ["chat", "Chat"],
+                ["pdf", "PDF"],
+                ["image", "Image"],
+              ].map(([mode, label]) => (
+                <button
+                  className={composerMode === mode ? "is-active" : ""}
+                  type="button"
+                  key={mode}
+                  aria-pressed={composerMode === mode}
+                  disabled={sending || Boolean(editingMessage)}
+                  onClick={() => {
+                    setComposerMode(mode);
+                    setSelectedFiles([]);
+                    setNotice("");
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <label className="visually-hidden" htmlFor="chat-message">
               Message Trisha
             </label>
@@ -823,7 +997,13 @@ const Home = () => {
               value={input}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleComposerKeyDown}
-              placeholder="Message Trisha..."
+              placeholder={
+                composerMode === "chat"
+                  ? "Message Trisha..."
+                  : composerMode === "pdf"
+                    ? "Describe the PDF you want..."
+                    : "Describe the image you want..."
+              }
               rows="1"
               maxLength="8000"
               disabled={sending}
@@ -851,14 +1031,30 @@ const Home = () => {
                   ＋
                 </button>
                 <button
-                  className="send-button"
+                  className={composerMode === "chat" ? "send-button" : "generate-button"}
                   type="submit"
                   aria-label={
-                    editingMessage ? "Resend edited message" : "Send message"
+                    composerMode === "chat"
+                      ? editingMessage
+                        ? "Resend edited message"
+                        : "Send message"
+                      : composerMode === "pdf"
+                        ? "Create PDF"
+                        : "Generate image"
                   }
-                  disabled={(!input.trim() && !selectedFiles.length) || sending}
+                  disabled={
+                    (composerMode === "chat"
+                      ? !input.trim() && !selectedFiles.length
+                      : !input.trim()) || sending
+                  }
                 >
-                  ↑
+                  {composerMode === "chat"
+                    ? "↑"
+                    : sending
+                      ? "Creating..."
+                      : composerMode === "pdf"
+                        ? "Create PDF"
+                        : "Generate image"}
                 </button>
               </div>
             </div>

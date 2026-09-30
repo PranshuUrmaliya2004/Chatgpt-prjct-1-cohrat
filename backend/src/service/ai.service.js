@@ -65,7 +65,33 @@ async function generateVector(content) {
     throw new Error("Failed to generate embedding");
   }
 }
+async function generateImage(prompt) {
+  try {
+    const response = await ai.models.generateImages({
+      model: process.env.GEMINI_IMAGE_MODEL || "imagen-4.0-generate-001",
+      prompt,
+      config: {
+        numberOfImages: 1,
+        aspectRatio: "1:1",
+        outputMimeType: "image/jpeg",
+        outputCompressionQuality: 85,
+      },
+    });
+    const generatedImage = response.generatedImages?.[0]?.image;
+    if (!generatedImage?.imageBytes) {
+      throw new Error("The image provider returned no image.");
+    }
+    return {
+      imageBytes: generatedImage.imageBytes,
+      mimeType: generatedImage.mimeType || "image/jpeg",
+    };
+  } catch (error) {
+    console.error("Image Generation Error:", error.message);
+    throw new Error("Image generation is temporarily unavailable.");
+  }
+}
 module.exports = {
   generateContent,
   generateVector,
+  generateImage,
 };
